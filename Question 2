@@ -1,0 +1,25 @@
+a.
+SELECT count(Orders.OrderID)
+FROM Shippers, Orders
+WHERE Shippers.ShipperID = Orders.ShipperID AND Shippers.ShipperName = "Speedy Express";
+
+b.
+SELECT Employees.LastName
+FROM
+(SELECT Orders.EmployeeID, COUNT(Orders.OrderID) as TotalOrder FROM Employees NATURAL JOIN Orders GROUP BY Orders.EmployeeID) s, Employees
+WHERE s.TotalOrder = (SELECT MAX(s2.TotalOrder2)
+FROM (SELECT o.EmployeeID, COUNT(o.OrderID) as TotalOrder2 FROM Employees AS e NATURAL JOIN Orders as o GROUP BY o.EmployeeID) s2)
+AND s.EmployeeID = Employees.EmployeeID;
+
+c.
+SELECT Products.ProductName
+FROM Orders NATURAL JOIN OrderDetails
+NATURAL JOIN Products
+NATURAL JOIN Customers
+WHERE Customers.Country="Germany"
+GROUP BY Products.ProductID
+ORDER BY COUNT(Products.ProductID) DESC
+LIMIT 1;
+
+I used two different ways in calculating the extreme value such as most or least. The method I used in c is simpler but does not perform well 
+when the most frequent order has more than one product corresponding to it.
